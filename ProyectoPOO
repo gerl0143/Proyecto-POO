@@ -1,0 +1,375 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+
+
+// Comentarios generales 
+/*
+- La parte que implento gerardo no srive, solo es como lo que debe hacer pero toda la logica no esta implementada
+- Checar si podemos mejorar lo del menu en lugar de usar esCliente usar el nuevo atributo "Rol" en la clase de cliente
+
+*/
+package com.mycompany.proyectopoo;
+import java.util.Scanner;
+import java.io.IOException;
+import java.util.InputMismatchException;
+import java.util.Random;
+/**
+ *
+ * @author Angel
+ */
+public class ProyectoPOO {
+    public static Cliente clienteActual;
+    public static void main(String[] args) throws IOException {
+        // Variables
+        int op = -1,cant, indice;
+        double puntos=0;
+        boolean esCliente = false;        
+        String contraseña, usuario, nombre, correo, direccion, cp, telefono, producto, pago;
+        Scanner sc = new Scanner(System.in);
+        
+        // Datos de prueba
+        BaseDatos baseDatos = new BaseDatos();
+        
+        // Cargar base de datos 
+        baseDatos.LeerArchivoProductos("productos.txt");
+        baseDatos.LeerArchivoClientes("clientes.txt");
+        
+        // Main   
+        System.out.println("Bienvendio a S.I.G.A");
+        while(op != 0) {
+            System.out.println("[1] Iniciar sesion");
+            System.out.println("[2] Continuar sin sesion");
+            System.out.println("[3] Registrarse");
+            System.out.println("[0] Salir");
+            try {
+                op = sc.nextInt();
+            
+                switch(op) {
+                    case 1:
+                        System.out.println("Ingrese su nombre de usuario");
+                        usuario = sc.next();
+                        
+                        System.out.println("Ingrese su contraseña");
+                        contraseña = sc.next();
+                        
+                        clienteActual = baseDatos.BuscarCliente(usuario);
+                        
+                        if (clienteActual != null && clienteActual.getContraseña().equals(contraseña)){
+                            esCliente = true;
+                            System.out.println("Bienvenido "+usuario);
+                        } else{
+                            System.out.println("Error al buscar al cliente");
+                        }
+                        break;
+                    case 2:
+                        esCliente = false;
+                        System.out.println("Usted Esta ingresando sin cuenta");
+                        System.out.println("Si usted se registra tendra acceso a los siguientes beneficios");
+                        System.out.println("- Programa de lealtad");
+                        System.out.println("Obtenga puntos con sus compras y acumule para comprar con ellos");
+                        System.out.println("- Acceso al historial de compras");
+                        System.out.println("- Ver sus puntos");
+                        System.out.println("\nAl realizar compras mayores a $450 podra subir de nivel desde el nivel 0 hasta el nivel 5");
+                        System.out.println("\nAl realizar compras mayores a $800 podra subir de nivel desde el nivel 5 hasta el nivel 10");
+                        System.out.println("\nAl realizar compras mayores a $1400 podra subir de nivel desde el nivel 10 hasta el nivel 15");
+                        System.out.println("\nAl llegar al nivel 15 en cada compra de $700 se le regala un producto aleatorio");
+                        break;
+                    case 3:
+                        System.out.println("Ingrese su nombre completo (Nombre(s) Apellidos)");
+                        nombre = sc.next();
+                        
+                        System.out.println("Ingrese su correo electronico");
+                        correo = sc.next();
+                        
+                        System.out.println("Ingrese su direccion (calle)");
+                        direccion = sc.next();
+                        
+                        System.out.println("Ingrese su codigo postal");
+                        cp = sc.next();
+                        
+                        System.out.println("Ingrese su telefono");
+                        telefono = sc.next();
+                        
+                        do{
+                            System.out.println("Ingrese su nombre de usuario (iniciara sesion con el)");
+                            usuario = sc.next();
+                            
+                            if(baseDatos.BuscarCliente(usuario) != null)
+                                System.out.println("Este nombre de usuario ya esta ocupado");
+                        } while(baseDatos.BuscarCliente(usuario) != null);
+                        
+                        do{
+                            System.out.println("Ingrese su contraseña(al menos 8 caracteres)");
+                            contraseña = sc.next();
+                            
+                            if(contraseña.length() < 8) {
+                                System.out.println("Ingrese una contraseña con mas de 8 caracteres");
+                            }
+                           
+                        }while(contraseña.length() > 8);
+                        
+                        // Agregar a la lista de clientes
+                        Cliente cliente = new Cliente(nombre,correo,direccion,cp,telefono,usuario,contraseña);
+                        baseDatos.getClientes().add(cliente);
+                        System.out.println("Usted se ha registrado correctamente!");
+                        
+                        break;
+                    case 0:
+                        System.out.println("Adios");
+                        return;
+                }
+            } catch(InputMismatchException e) {
+                System.out.println("Ingrese un valor numerico");
+                sc.next();
+            }
+            
+            // Menu Clientes
+            Carrito car=new Carrito();
+            if(esCliente){
+                while(op != 0){
+                    System.out.println("[1] Buscar producto");
+                    System.out.println("[2] Ver carrito");
+                    System.out.println("[3] Actualizar mis datos");
+                    System.out.println("[4] Ver mis compras");
+                    System.out.println("[5] Ver ms puntos");
+                    System.out.println("[6] Cerrar Sesion");
+                    System.out.println("[0] Salir");
+                    System.out.println("Ingrese una opcion");
+                    
+                    try{
+                        op = sc.nextInt(); 
+                        switch(op) {
+                            case 1:
+                                System.out.println("Ingrese el nombre del producto");
+                                producto = sc.next();
+                                if(baseDatos.BuscarProducto(producto) != null) {
+                                    System.out.println("Desea comprar este producto?");
+                                    System.out.println("[1] Si");
+                                    System.out.println("[2] No");
+                                    op = sc.nextInt();
+                                    
+                                    if(op == 1) {
+                                        System.out.println("[1] Norte");
+                                        System.out.println("[2] Centro");
+                                        System.out.println("[3] Sur");
+                                        System.out.println("[0] Salir");
+                                        System.out.println("Indique la sucursal");
+                                        op = sc.nextInt();
+                                        
+                                        switch(op) {
+                                            case 1:
+                                                System.out.println("Indique la cantidad");
+                                                cant = sc.nextInt();
+                                                indice = baseDatos.IndiceProducto(producto);
+                                                if(baseDatos.norte.Productos.get(indice).getStock() <= cant){
+                                                    
+                                                    car.add(baseDatos.norte.Productos.get(indice));
+                                                    for(int j=0;j<cant;j++){
+                                                        total=total+baseDatos.norte.Productos.get(indice).getPrecio();
+                                                    }
+                                                    if(total>=450 && nivel<6){
+                                                        nivel++;
+                                                    }else if(total>=800 && nivel<11){
+                                                        nivel++;
+                                                    }else if(total>=1400 && nivel<16){
+                                                        nivel++;
+                                                    }else if(total>=700 && nivel==15){
+                                                        Random random=new Random();
+                                                        int aleatorio=random.nextInt()*14;
+                                                        car.add(baseDatos.centro.Productos.get(aleatorio));
+                                                    }
+                                                    if(nivel==0 || nivel<5){
+                                                        puntos=puntos+0.005;
+                                                    }else if(nivel==5){
+                                                        puntos=puntos+0.01;
+                                                    }else if(nivel>5){
+                                                        puntos=puntos+0.03;
+                                                    }
+                                                    System.out.println("Su compra ha sido realizada");
+                                                    // Chequear que sea positivo y ademas hacer todas las transacciones
+                                                    // Decrementar de stock
+                                                    // Aumentar a carrito
+                                                    // Checar saldo 
+                                                    // Checar puntos 
+                                                    
+                                                } else {
+                                                    System.out.println("Stock insuficiente");
+                                                }
+                                                break;
+                                            case 2:
+                                                System.out.println("Indique la cantidad");
+                                                cant = sc.nextInt();
+                                                indice = baseDatos.IndiceProducto(producto);
+                                                if(baseDatos.centro.Productos.get(indice).getStock() <= cant){
+                                                    car.add(baseDatos.centro.Productos.get(indice));
+                                                    for(int j=0;j<cant;j++){
+                                                        total=total+baseDatos.centro.Productos.get(indice).getPrecio();
+                                                    }
+                                                    if(total>=450 && nivel<6){
+                                                        nivel++;
+                                                    }else if(total>=800 && nivel<11){
+                                                        nivel++;
+                                                    }else if(total>=1400 && nivel<16){
+                                                        nivel++;
+                                                    }else if(total>=700 && nivel==15){
+                                                        Random random=new Random();
+                                                        int aleatorio=random.nextInt()*14;
+                                                        car.add(baseDatos.centro.Productos.get(aleatorio));
+                                                    }
+                                                    if(nivel==0 || nivel<5){
+                                                        puntos=puntos+0.005;
+                                                    }else if(nivel==5){
+                                                        puntos=puntos+0.01;
+                                                    }else if(nivel>5){
+                                                        puntos=puntos+0.03;
+                                                    }
+                                                    System.out.println("Su compra ha sido realizada");
+                                                    // Chequear que sea positivo y ademas hacer todas las transacciones
+                                                    // Decrementar de stock
+                                                    // Aumentar a carrito
+                                                    // Checar saldo 
+                                                    // Checar puntos 
+                                                    
+                                                } else {
+                                                    System.out.println("Stock insuficiente");
+                                                }
+                                                break;
+                                            case 3:
+                                                System.out.println("Indique la cantidad");
+                                                cant = sc.nextInt();
+                                                indice = baseDatos.IndiceProducto(producto);
+                                                if(baseDatos.sur.Productos.get(indice).getStock() <= cant){
+                                                    car.add(baseDatos.sur.Productos.get(indice));
+                                                    for(int j=0;j<cant;j++){
+                                                        total=total+baseDatos.sur.Productos.get(indice).getPrecio();
+                                                    }
+                                                    if(total>=450 && nivel<6){
+                                                        nivel++;
+                                                    }else if(total>=800 && nivel<11){
+                                                        nivel++;
+                                                    }else if(total>=1400 && nivel<16){
+                                                        nivel++;
+                                                    }else if(total>=700 && nivel==15){
+                                                        Random random=new Random();
+                                                        int aleatorio=random.nextInt()*14;
+                                                        car.add(baseDatos.centro.Productos.get(aleatorio));
+                                                    }
+                                                    if(nivel==0 || nivel<5){
+                                                        puntos=puntos+0.005;
+                                                    }else if(nivel==5){
+                                                        puntos=puntos+0.01;
+                                                    }else if(nivel>5){
+                                                        puntos=puntos+0.03;
+                                                    }
+                                                    System.out.println("Su compra ha sido realizada");
+                                                    // Chequear que sea positivo y ademas hacer todas las transacciones
+                                                    // Decrementar de stock
+                                                    // Aumentar a carrito
+                                                    // Checar saldo 
+                                                    // Checar puntos 
+                                                    
+                                                } else {
+                                                    System.out.println("Stock insuficiente");
+                                                }
+                                                break;
+                                            case 0:
+                                                break;
+                                            default:
+                                                System.out.println("Opcion invalida");
+                                        }
+                                    }
+                                    
+                                }
+                                break;
+                            case 2:
+                                car.mostrar();
+                                break;
+                            case 3:
+                                System.out.println("Bienvenido "+clienteActual);
+                                System.out.println("[1] Actualizar Nombre");
+                                System.out.println("[2] Actualizar Correo");
+                                System.out.println("[3] Actualizar Direccion");
+                                System.out.println("[4] Actualizar CP");
+                                System.out.println("[5] Actualizar Telefono");
+                                System.out.println("[6] Actualizar Pago");
+                                System.out.println("[7] Actualizar Contraseña");
+                                System.out.println("[0] Salir");
+                                System.out.println("Ingrese una opcion");
+                                op = sc.nextInt();
+                                
+                                switch(op) {
+                                    case 1:
+                                        System.out.println("Ingrese su nuevo nombre");
+                                        nombre = sc.next();
+                                        clienteActual.setNombre(nombre);
+                                        System.out.println("Nombre actualizado correctamente");
+                                        break;
+                                    case 2:
+                                        System.out.println("Ingrese su nuevo correo");
+                                        correo = sc.next();
+                                        clienteActual.setCorreo(correo);
+                                        System.out.println("Correo actualizado correctamente");
+                                        break;
+                                    case 3:
+                                        System.out.println("Ingrese su nuevo direccion");
+                                        direccion = sc.next();
+                                        clienteActual.setDireccion(direccion);
+                                        System.out.println("Direccion actualizada correctamente");
+                                        break;
+                                    case 4:
+                                        System.out.println("Ingrese su nuevo Codigo postal");
+                                        cp = sc.next();
+                                        clienteActual.setCP(cp);
+                                        System.out.println("Codigo postal actualizado correctamente");
+                                        break;
+                                    case 5:
+                                        System.out.println("Ingrese su nuevo telefono");
+                                        telefono = sc.next();
+                                        clienteActual.setTelefono(telefono);
+                                        System.out.println("telefono actualizado correctamente");
+                                        break;
+                                    case 6:
+                                        System.out.println("Ingrese su nuevo metodo de pago");
+                                        pago = sc.next();
+                                        clienteActual.setPago(pago);
+                                        System.out.println("Metodo de pago actualizado correctamente");
+                                        // Verificar como implementar el metodo de pago
+                                        break;
+                                    case 7:
+                                        System.out.println("Ingrese su nueva contraseña");
+                                        contraseña = sc.next();
+                                        clienteActual.setContraseña(contraseña);
+                                        System.out.println("Contraseña correctamente");
+                                        break;
+                                    case 0:
+                                        break;
+                                    default:
+                                        System.out.println("Opcion invalida");                    
+                                }
+                                break;
+                            case 4:
+                                System.out.println("Estas son sus compras");
+                                car.mostrar();
+                                System.out.println("Total a pagar:"+total);
+                               
+                                break;
+                            case 5:
+                                System.out.println("Puntos:"+puntos);
+                                break;
+                             default:
+                                 break;
+                        }                      
+                    } catch(InputMismatchException e) {
+                        System.out.println("Ingrese una opcion numerica");
+                        sc.next();
+                    }  
+                }
+            } else {
+                //menu de no cliente 
+                
+            }
+        }
+    }
+}
