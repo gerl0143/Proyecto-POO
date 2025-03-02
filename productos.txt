@@ -1,0 +1,18 @@
+CocaCola|75007614|19.5|Bebidas|1|12|21
+Fritos|75007614|14|Botana|10|4|0
+Dorito|75007614|18|Botana|3|8|0
+Halls|75007614|10.5|Dulces|6|6|21
+Hersheys|75007614|18.5|Choclates|6|18|11
+KitKat|75007614|21.5|Chocolates|1|12|21
+Sabritas|75007614|18|Botana|22|1|13
+Ruffles|75007614|18|Botana|6|32|0
+Emperador|75007614|17|Galletas|1|43|0
+Florentinas|75007614|14|Galletas|7|17|0
+Jarritos|75007614|13|Bebidas|12|9|3
+Agua Bonafont 1L|75007614|10|Bebidas|4|26|9
+Mentos|75007614|11|Dulce|6|50|12
+ICEE|75007614|50|Bebidas|18|0|5
+Marlboro(Pza)|75007614|6|Cigarros|13|20|2
+Maruchan|75007614|20|Sopas|12|67|33
+Cacahuates|75007614|13|Botana|2|15|6
+Trident|75007614|18|Dulces|6|12|20
